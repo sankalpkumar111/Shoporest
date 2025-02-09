@@ -1,0 +1,19 @@
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure login card takes more width */
+.login-card {
+    max-width: 100%;
+    border-radius: 12px;
+}
+
+/* Remove left and right gap, add padding for better spacing */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0;
+        margin: 0;
+    }
+}
