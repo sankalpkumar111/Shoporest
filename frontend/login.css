@@ -4,16 +4,18 @@ body {
     padding: 0;
 }
 
-/* Ensure login card takes more width */
+/* Make login card full-width on mobile */
 .login-card {
-    max-width: 100%;
+    width: 100%;
+    max-width: 450px; /* Adjust width for larger screens */
     border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Remove left and right gap, add padding for better spacing */
-@media (max-width: 768px) {
-    .container-fluid {
-        padding: 0;
-        margin: 0;
-    }
+/* Remove default spacing */
+.container-fluid {
+    padding: 0;
+    margin: 0;
+    height: 100vh; /* Full height */
 }

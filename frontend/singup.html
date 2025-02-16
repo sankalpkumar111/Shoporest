@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | ShopOrest</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/517442c859.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mt-3 mt-md-5">
+        <div class="registration-box w-100 mx-auto">
+            <h3 class="text-center mb-4">Create an Account</h3>
+            <form id="signup-form">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        <span class="input-group-text toggle-password" onclick="togglePassword('password', 'togglePasswordIcon1')">
+                            <i id="togglePasswordIcon1" class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
+                        <span class="input-group-text toggle-password" onclick="togglePassword('confirm-password', 'togglePasswordIcon2')">
+                            <i id="togglePasswordIcon2" class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">OTP Code</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="otp" placeholder="Enter OTP" required>
+                        <button type="button" class="btn btn-primary ms-2" id="send-otp-btn" onclick="sendOTP()">Send Code</button>
+                    </div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms"> I agree with terms and conditions.</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                
+                <div id="error-message" class="text-danger mt-3 text-center"></div>
+
+                <div class="text-center mt-3">
+                    <a href="#" class="text-decoration-none">Forgot Password?</a> | 
+                    <a href="./login.html" class="text-decoration-none">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:8000/api"; // Backend URL
+
+        // ✅ Toggle Password Visibility
+        function togglePassword(fieldId, iconId) {
+            let field = document.getElementById(fieldId);
+            let icon = document.getElementById(iconId);
+            if (field.type === "password") {
+                field.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                field.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        // ✅ Send OTP
+        function sendOTP() {
+            let email = document.getElementById("email").value;
+            let otpButton = document.getElementById("send-otp-btn");
+            let errorMessage = document.getElementById("error-message");
+
+            if (!email) {
+                errorMessage.innerText = "Please enter an email address.";
+                return;
+            }
+
+            otpButton.disabled = true; // Disable button to prevent multiple requests
+
+            fetch(`${BASE_URL}/send-otp/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    if (data.error === "Email already exists!") {
+                errorMessage.innerText = "This email is already registered. Please log in.";
+            } else {
+                errorMessage.innerText = data.error;
+            }
+                   
+                } else {
+                    alert("OTP sent successfully to your email!");
+                }
+                otpButton.disabled = false; // Re-enable button
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                errorMessage.innerText = "Failed to send OTP. Please try again.";
+                otpButton.disabled = false;
+            });
+        }
+
+        // ✅ Handle Registration (Verify OTP & Register)
+        document.getElementById("signup-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm-password").value;
+            let otp = document.getElementById("otp").value;
+            let errorMessage = document.getElementById("error-message");
+
+            // ✅ Validate Password & Confirm Password
+            if (password !== confirmPassword) {
+                errorMessage.innerText = "Passwords do not match.";
+                return;
+            }
+
+            fetch(`${BASE_URL}/register/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email, password: password, otp: otp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorMessage.innerText = data.error;
+                } else {
+                    alert("Registration successful! Redirecting to login...");
+                    window.location.href = "login.html";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                errorMessage.innerText = "An error occurred. Please try again.";
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

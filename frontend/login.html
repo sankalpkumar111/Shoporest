@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="./login.css">
 </head>
 <body class="m-0 p-0">
-    <div class="container-fluid d-flex flex-column align-items-start justify-content-start vh-100 py-2 px-2 ">
-        <div class="card p-4 shadow-lg w-100 mx-auto login-card">
+    <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-3 shadow-lg login-card w-100" style="max-width: 400px;">
             <h3 class="text-center mb-3">Welcome Back</h3>
-            <form>
+            <form id="login-form">
                 <div class="mb-3">
                     <label class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" class="form-control" placeholder="Enter your email" required>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
                     </div>
                 </div>
                 
@@ -26,7 +26,7 @@
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
-                        <span class="input-group-text toggle-password" onclick="togglePassword('password', 'togglePasswordIcon')">
+                        <span class="input-group-text toggle-password" onclick="togglePassword()">
                             <i id="togglePasswordIcon" class="fas fa-eye"></i>
                         </span>
                     </div>
@@ -36,30 +36,68 @@
                     <input type="checkbox" class="form-check-input" id="remember">
                     <label class="form-check-label" for="remember">Remember me</label>
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary w-100">Login</button>
-                
+
                 <div class="text-center mt-3">
                     <a href="#" class="text-decoration-none">Forgot Password?</a> | 
-                    <a href="./index.html" class="text-decoration-none">Sign Up</a>
+                    <a href="./singup.html" class="text-decoration-none">Sign Up</a>
                 </div>
+                
+                <div id="error-message" class="text-danger mt-3 text-center"></div>
             </form>
         </div>
     </div>
 
     <script>
-        function togglePassword(fieldId, iconId) {
-            let field = document.getElementById(fieldId);
-            let icon = document.getElementById(iconId);
-            if (field.type === "password") {
-                field.type = "text";
+        function togglePassword() {
+            let passwordField = document.getElementById("password");
+            let icon = document.getElementById("togglePasswordIcon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
                 icon.classList.remove("fa-eye");
                 icon.classList.add("fa-eye-slash");
             } else {
-                field.type = "password";
+                passwordField.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
             }
+        }
+
+        document.getElementById("login-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let errorMessage = document.getElementById("error-message");
+
+            // Clear previous error message
+            errorMessage.innerText = '';
+
+            try {
+                let response = await fetch("http://127.0.0.1:8000/api/login/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+
+                let data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem("token", data.token); // Store JWT token
+                    alert("Login Successful!");
+                    window.location.href = "index.html"; // Redirect to home page
+                } else {
+                    errorMessage.innerText = data.error || "Invalid credentials. Please try again.";
+                }
+            } catch (error) {
+                errorMessage.innerText = "Error: Unable to login. Please check your internet connection.";
+                console.error("Error:", error);
+            }
+        });
+
+        // If already logged in, redirect to index.html
+        if (localStorage.getItem("token")) {
+            window.location.href = "index.html";
         }
     </script>
 
