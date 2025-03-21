@@ -1,0 +1,21 @@
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Make login card full-width on mobile */
+.login-card {
+    width: 100%;
+    max-width: 450px; /* Adjust width for larger screens */
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove default spacing */
+.container-fluid {
+    padding: 0;
+    margin: 0;
+    height: 100vh; /* Full height */
+}

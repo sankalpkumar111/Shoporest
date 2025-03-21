@@ -1,0 +1,40 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.registration-box {
+    max-width: 400px;
+    width: 100%;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove vertical centering */
+.container {
+    display: block;
+}
+
+.input-group-text {
+    background: hsl(210, 16%, 93%);
+    border: none;
+    border-radius: 20px 0 0 20px;
+}
+
+.form-control {
+    border-radius: 20px;
+}
+
+.btn-primary {
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.toggle-password {
+    cursor: pointer;
+}
